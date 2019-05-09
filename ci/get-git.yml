@@ -17,7 +17,8 @@ run:
   args:
   - -exc
   - |
+    ls -la
     pwd
     file=`pwd`
-    cd /tmp/build/get
+    cd demo
     echo `git symbolic-ref --short HEAD` > $file/git-info/branch
