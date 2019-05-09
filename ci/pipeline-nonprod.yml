@@ -22,7 +22,7 @@ jobs:
     - get: source-code
       trigger: true
     - task: get-git
-      file: get/ci/get-git.yml
+      file: source-code/ci/get-git.yml
     - put: source-code
 
 

@@ -17,4 +17,7 @@ run:
   args:
   - -exc
   - |
-    echo `git symbolic-ref --short HEAD` > ci\.branch
+    pwd
+    file=`pwd`
+    cd /tmp/build/get
+    echo `git symbolic-ref --short HEAD` > $file/git-info/branch
