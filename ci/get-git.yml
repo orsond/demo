@@ -10,7 +10,7 @@ image_resource:
 inputs:
 - name: source-code
 outputs:
-- name: git-info
+- name: source-code
 
 run:
   path: sh
@@ -19,6 +19,5 @@ run:
   - |
     ls -la
     pwd
-    file=`pwd`
-    cd demo
-    echo `git symbolic-ref --short HEAD` > $file/git-info/branch
+    cd source-code
+    echo `git symbolic-ref --short HEAD` > .branch
