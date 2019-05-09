@@ -23,7 +23,6 @@ run:
     export TERM=ansi
     git branch
     git branch | grep -i "\*"
-    git rev-parse --abbrev-ref HEAD
-    echo `git rev-parse --abbrev-ref HEAD` > .branch
-    ls -la 
-    cd ..
+    echo `git branch | grep -i "\*"` > .branch
+    ls -la
+    cat .branch

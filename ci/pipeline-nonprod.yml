@@ -33,13 +33,14 @@ jobs:
   plan:
     - get: source-code
       trigger: true
+      passed: [build]
     - task: get-git
       file: source-code/ci/get-git.yml
+    - put: source-code
 - name: build
   serial: true
   plan:
     - get: source-code
-      passed: [initialize]
       trigger: true
     - task: build-local
       config:
@@ -50,10 +51,8 @@ jobs:
           args:
           - -exc
           - |
-            ls -la
-            pwd
             cd source-code
-            ls -la
+            mvn test
       
 
 
