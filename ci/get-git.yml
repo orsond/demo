@@ -20,7 +20,7 @@ run:
     ls -la
     pwd
     cd source-code
-    export TERM=msys
+    export TERM=ansi
     git branch
     git branch | grep "\*"
     git rev-parse --abbrev-ref HEAD
