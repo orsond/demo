@@ -20,4 +20,7 @@ run:
     ls -la
     pwd
     cd source-code
-    echo `git symbolic-ref --short HEAD` > .branch
+    git branch
+    git branch | grep "\*"
+    git rev-parse --abbrev-ref HEAD
+    echo `git rev-parse --abbrev-ref HEAD` > .branch
