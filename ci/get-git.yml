@@ -22,7 +22,7 @@ run:
     cd source-code
     export TERM=ansi
     git branch
-    git branch | grep -i "\*"
-    echo `git branch | grep -i "\*"` > .branch
+    git branch | grep -v "*"
+    echo `git branch | grep -v "*"` > .branch
     ls -la
     cat .branch

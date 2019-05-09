@@ -28,15 +28,6 @@ resources:
 
 
 jobs:
-- name: initialize
-  serial: true
-  plan:
-    - get: source-code
-      trigger: true
-      passed: [build]
-    - task: get-git
-      file: source-code/ci/get-git.yml
-    - put: source-code
 - name: build
   serial: true
   plan:
@@ -53,6 +44,14 @@ jobs:
           - |
             cd source-code
             mvn test
+- name: initialize
+  serial: true
+  plan:
+    - get: source-code
+      trigger: true
+      passed: [build]
+    - task: get-git
+      file: source-code/ci/get-git.yml
       
 
 
