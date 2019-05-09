@@ -1,0 +1,59 @@
+---
+
+resource_types:
+- name: git-multibranch
+  type: docker-image
+  source:
+    repository: cfcommunity/git-multibranch-resource
+
+resources:
+- name: source-code
+  type: git-multibranch
+  source:
+    uri: git@github.com:my-org/my-repo.git
+    branches: '.*'
+    ignore_branches: 'master'
+
+
+jobs:
+- name: initialize
+  serial: true
+  plan:
+    - get: source-code
+      trigger: true
+    - task: get-git
+      file: source-code/ci/get-git.yml
+    - put: source-code
+
+- name: build
+  serial: true
+  plan:
+    - get: source-code
+    - task: build-local
+      file: source-code/ci/build-local.yml
+
+- name: integration-tests
+  serial: true
+  plan:
+    - task: deploy-local
+      file: source-code/ci/deploy-local.yml
+    - task: integration
+      file: source-code/ci/integration.yml
+
+- name: artifact
+  serial: true
+  plan: 
+    - task: build-artifact
+      file: source-code/ci/build-artifact.yml
+
+- name: deploy-transient
+  serial: true
+  plan:
+    - task: deploy-transient
+      file: source-code/ci/deploy-transient.yml
+      
+- name: deployment-test
+  serial: true
+  plan:
+    - task: post-deployment-test
+      file: post-deployment-test.yml
