@@ -22,6 +22,8 @@ run:
     cd source-code
     export TERM=ansi
     git branch
-    git branch | grep "\*"
+    git branch | grep -i "\*"
     git rev-parse --abbrev-ref HEAD
     echo `git rev-parse --abbrev-ref HEAD` > .branch
+    ls -la 
+    cd ..
