@@ -9,6 +9,12 @@ image_resource:
 
 inputs:
 - name: source-code
+outputs:
+- name: git-info
 
 run:
-  path: source-code/ci/get-git.sh
+  path: sh
+  args:
+  - -exc
+  - |
+    echo `git symbolic-ref --short HEAD` > ci\.branch
