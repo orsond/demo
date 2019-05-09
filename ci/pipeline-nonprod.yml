@@ -29,6 +29,70 @@ resources:
 
 jobs:
 - name: build
+  plan:
+    - get: source-code
+      trigger: true
+    - task: build-local
+      config:
+      
+        << : *task-config
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            cd source-code
+            mvn package
+- name: test
+  plan:
+    - get: source-code
+      trigger: true
+    - task: tests
+      config:
+      
+        << : *task-config
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            cd source-code
+            mvn test
+- name: integration-test
+  serial: true
+  plan:
+    - get: source-code
+      trigger: true
+    - task: set-up-dependencies
+      config:
+        << : *task-config
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            cd source-code
+            mvn integration-test
+    - task: start-application
+      config:
+        << : *task-config
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            cd source-code
+    - task: run-tests
+      config:
+        << : *task-config
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            cd source-code
+            mvn integration-test
+- name: sonar-scan
   serial: true
   plan:
     - get: source-code
@@ -44,15 +108,44 @@ jobs:
           - |
             cd source-code
             mvn test
-- name: initialize
+- name: artifact
   serial: true
   plan:
     - get: source-code
       trigger: true
-      passed: [build]
+      passed: [build,test,sonar-scan,integration-test]
+    - task: build-artifact
+      config:
+        << : *task-config
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            cd source-code
+- name: deploy
+  serial: true
+  plan:
+    - get: source-code
+      trigger: true
+      passed: [artifact]
     - task: get-git
       file: source-code/ci/get-git.yml
-      
+- name: postdeployment-test
+  serial: true
+  plan:
+    - get: source-code
+      trigger: true
+      passed: [deploy]
+    - task: run-selenium-test
+      config:
+        << : *task-config
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            cd source-code    
 
 
 
