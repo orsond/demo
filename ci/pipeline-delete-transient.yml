@@ -1,0 +1,29 @@
+---
+resources:
+  - name: 5-days
+    type: time
+    source:
+      interval: 2m
+
+jobs:
+  - name: delete-((branch))-deployment
+    plan:
+    - get: 5-days
+      trigger: true
+    - task: delete-deployment
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: alpine/git
+            tag: '1.0.7'
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            wget -c "http://192.168.1.3:8080/api/v1/cli?arch=amd64&platform=linux" -O fly
+            chmod +x fly
+            ./fly --target t login --concourse-url http://192.168.1.3:8080 -u test -p test
+            ./fly -t t dp -p delete-((branch)) -n

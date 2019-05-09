@@ -145,7 +145,35 @@ jobs:
           args:
           - -exc
           - |
-            cd source-code    
-
-
-
+            cd source-code
+- name: set-timer-for-removal
+  plan:
+  - get: source-code
+    trigger: true
+    passed: [deploy]
+  - task: create-timer
+    config:
+        platform: linux
+        image_resource:
+          type: registry-image
+          source:
+            repository: alpine/git
+            tag: '1.0.7'
+        inputs:
+        - name: source-code
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            cd source-code/ci
+            branch=`git branch | grep -v "*" | awk '{$1=$1};1'`
+            echo "---" > branch
+            echo "branch: $branch" >> branch
+            cat branch
+            wget -c "http://192.168.1.3:8080/api/v1/cli?arch=amd64&platform=linux" -O fly
+            chmod +x fly
+            ./fly --target t login --concourse-url http://192.168.1.3:8080 -u test -p test
+            ./fly -t t sp -c ci/pipeline-delete-transient.yml -p delete-$branch -v branch=$branch -n
+            ./fly -t t unpause-pipeline -p delete-$branch
+            
