@@ -166,7 +166,7 @@ jobs:
           args:
           - -exc
           - |
-            cd source-code/ci
+            cd source-code
             branch=`git branch | grep -v "*" | awk '{$1=$1};1'`
             echo "---" > branch
             echo "branch: $branch" >> branch
